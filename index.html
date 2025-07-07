@@ -1,144 +1,121 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Chúc Mừng Sinh Nhật</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chúc Mừng Sinh Nhật!</title>
   <style>
     body {
-      background: linear-gradient(to bottom right, #ffe6f0, #ffc1e3);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
-      font-family: sans-serif;
+      padding: 0;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
     }
 
-    .gift-box {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      background-color: #ff4081;
-      border-radius: 10px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: transform 0.3s;
+    h1 {
+      font-size: 3em;
+      margin-top: 50px;
+      animation: glow 2s ease-in-out infinite alternate;
     }
 
-    .gift-box:hover {
-      animation: shake 0.6s infinite;
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ff0080, 0 0 20px #ff0080;
+      }
+      to {
+        text-shadow: 0 0 20px #ff0080, 0 0 40px #ff0080;
+      }
     }
 
-    .lid {
-      position: absolute;
-      width: 150px;
-      height: 30px;
-      background-color: #d81b60;
-      top: -30px;
+    canvas {
+      position: fixed;
+      top: 0;
       left: 0;
-      border-radius: 10px 10px 0 0;
-      transform-origin: bottom center;
-      transition: transform 0.5s ease;
-    }
-
-    /* Biểu tượng sinh nhật (ảnh hoặc emoji) */
-    .icon {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-size: 48px;
-      opacity: 0;
-    }
-
-    .message {
-      margin-top: 30px;
-      font-size: 36px;
-      font-weight: bold;
-      color: #d50000;
-      opacity: 0;
-      transform: scale(0.5) translateY(20px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .opened .lid {
-      transform: rotateX(150deg);
-    }
-
-    .opened .icon {
-      animation: rise 1s ease-out forwards;
-    }
-
-    .show-message {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    @keyframes shake {
-      0% { transform: rotate(0deg); }
-      25% { transform: rotate(2deg); }
-      50% { transform: rotate(-2deg); }
-      75% { transform: rotate(2deg); }
-      100% { transform: rotate(0deg); }
-    }
-
-    @keyframes rise {
-      0% {
-        transform: translate(-50%, 0%) scale(0.3);
-        opacity: 0;
-      }
-      60% {
-        transform: translate(-50%, -80%) scale(1.2);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-50%, -150%) scale(1);
-        opacity: 0;
-      }
+      z-index: -1;
     }
   </style>
 </head>
 <body>
-
-  <!-- Hộp quà -->
-  <div class="gift-box" id="box" onclick="openGift(this)">
-    <div class="lid"></div>
-    <div class="icon">🎂</div> <!-- Biểu tượng sinh nhật -->
-  </div>
-
-  <!-- Dòng chữ chúc mừng -->
-  <div class="message" id="birthdayText">Happy Birthday</div>
-
-  <!-- Nhạc nền -->
-  <audio id="bgMusic" preload="auto">
-    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
-    Trình duyệt không hỗ trợ âm thanh.
-  </audio>
+  <h1>🎉 Chúc mừng sinh nhật! 🎂</h1>
+  <canvas id="fireworks"></canvas>
 
   <script>
-    function openGift(box) {
-      if (box.classList.contains('opened')) return;
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    let W = (canvas.width = window.innerWidth);
+    let H = (canvas.height = window.innerHeight);
 
-      box.classList.add('opened');
-      const music = document.getElementById('bgMusic');
-      music.play();
+    const particles = [];
 
-      // Hiện dòng chữ chúc mừng
-      setTimeout(() => {
-        document.getElementById('birthdayText').classList.add('show-message');
-      }, 1200);
-
-      // Ẩn hộp quà
-      setTimeout(() => {
-        document.getElementById('box').classList.add('hidden');
-      }, 1300);
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
     }
-  </script>
 
+    function createFirework(x, y) {
+      const colors = ["#ff4d4d", "#ffff66", "#66ff66", "#66ccff", "#ff66ff"];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          radius: 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          angle: random(0, 2 * Math.PI),
+          speed: random(1, 10),
+          alpha: 1,
+          decay: random(0.01, 0.02),
+        });
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, W, H);
+
+      for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          i--;
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function hexToRgb(hex) {
+      let bigint = parseInt(hex.replace("#", ""), 16);
+      let r = (bigint >> 16) & 255;
+      let g = (bigint >> 8) & 255;
+      let b = bigint & 255;
+      return `${r},${g},${b}`;
+    }
+
+    canvas.addEventListener("click", (e) => {
+      createFirework(e.clientX, e.clientY);
+    });
+
+    setInterval(() => {
+      createFirework(random(100, W - 100), random(100, H - 100));
+    }, 1500);
+
+    animate();
+    window.addEventListener("resize", () => {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
