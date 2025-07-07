@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chúc Mừng Sinh Nhật</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ffe6f0, #ffc1e3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .gift-box {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      background-color: #ff4081;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .gift-box:hover {
+      animation: shake 0.6s infinite;
+    }
+
+    .lid {
+      position: absolute;
+      width: 150px;
+      height: 30px;
+      background-color: #d81b60;
+      top: -30px;
+      left: 0;
+      border-radius: 10px 10px 0 0;
+      transform-origin: bottom center;
+      transition: transform 0.5s ease;
+    }
+
+    /* Biểu tượng sinh nhật (ảnh hoặc emoji) */
+    .icon {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 48px;
+      opacity: 0;
+    }
+
+    .message {
+      margin-top: 30px;
+      font-size: 36px;
+      font-weight: bold;
+      color: #d50000;
+      opacity: 0;
+      transform: scale(0.5) translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .opened .lid {
+      transform: rotateX(150deg);
+    }
+
+    .opened .icon {
+      animation: rise 1s ease-out forwards;
+    }
+
+    .show-message {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes shake {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      50% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translate(-50%, 0%) scale(0.3);
+        opacity: 0;
+      }
+      60% {
+        transform: translate(-50%, -80%) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -150%) scale(1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hộp quà -->
+  <div class="gift-box" id="box" onclick="openGift(this)">
+    <div class="lid"></div>
+    <div class="icon">🎂</div> <!-- Biểu tượng sinh nhật -->
+  </div>
+
+  <!-- Dòng chữ chúc mừng -->
+  <div class="message" id="birthdayText">Happy Birthday</div>
+
+  <!-- Nhạc nền -->
+  <audio id="bgMusic" preload="auto">
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
+    Trình duyệt không hỗ trợ âm thanh.
+  </audio>
+
+  <script>
+    function openGift(box) {
+      if (box.classList.contains('opened')) return;
+
+      box.classList.add('opened');
+      const music = document.getElementById('bgMusic');
+      music.play();
+
+      // Hiện dòng chữ chúc mừng
+      setTimeout(() => {
+        document.getElementById('birthdayText').classList.add('show-message');
+      }, 1200);
+
+      // Ẩn hộp quà
+      setTimeout(() => {
+        document.getElementById('box').classList.add('hidden');
+      }, 1300);
+    }
+  </script>
+
+</body>
+</html>
